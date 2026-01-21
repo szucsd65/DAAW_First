@@ -1,0 +1,43 @@
+extends layout
+
+block content
+  .container.mt-4
+    h1 Add New Equipment
+    form(method="post" action="/equipments")
+      .row.g-4
+        .col-md-6
+          .form-floating.mb-3
+            input#nom.form-control(type="text" name="nom" required)
+            label(for="nom") Name
+        .col-md-6
+          .form-floating.mb-3
+            input#tipus.form-control(type="text" name="tipus" placeholder="Sports, Culture, Library" required)
+            label(for="tipus") Type
+        .col-md-6
+          .form-floating.mb-3
+            input#localitzacio.form-control(type="text" name="localitzacio" required)
+            label(for="localitzacio") Location
+        .col-md-6
+          .form-floating.mb-3
+            input#districte.form-control(type="text" name="districte")
+            label(for="districte") District
+        .col-md-6
+          .form-floating.mb-3
+            input#horari.form-control(type="text" name="horari" placeholder="Mon-Fri 9-17")
+            label(for="horari") Hours
+        .col-md-6
+          .form-floating.mb-3
+            input#telefon.form-control(type="tel" name="telefon")
+            label(for="telefon") Phone
+        .col-md-6
+          .form-floating.mb-3
+            input#latitud.form-control(type="number" step="0.00001" name="latitud")
+            label(for="latitud") Latitude
+        .col-md-6
+          .form-floating.mb-3
+            input#longitud.form-control(type="number" step="0.00001" name="longitud")
+            label(for="longitud") Longitude
+      .row.mt-4
+        .col-12
+          button.btn.btn-primary.btn-lg(type="submit") Add Equipment
+          a.btn.btn-secondary.ms-2.btn-lg(href="/equipments") Cancel

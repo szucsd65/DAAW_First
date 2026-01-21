@@ -1,0 +1,29 @@
+extends layout
+
+block content
+  .container.mt-4
+    h1 My Reviews
+    if ratings && ratings.length
+      .table-responsive
+        table.table.table-hover
+          thead.table-dark
+            tr
+              th Equipment
+              th Type
+              th Rating
+              th Review Preview
+              th Date
+          tbody
+            each rating in ratings
+              tr
+                td
+                  a(href=`/equipment/${rating.equipment._id}`)= rating.equipment.nom
+                td= rating.equipment.tipus
+                td
+                  span.badge.bg-info= `${rating.rating}/5`
+                td= (rating.text || '').substring(0, 50) + '...'
+                td.small= rating.createdAt ? new Date(rating.createdAt).toLocaleDateString() : 'N/A'
+    else
+      .alert.alert-info.text-center.shadow-sm.py-5
+        h4 You haven't rated any facilities yet
+        a.btn.btn-primary.btn-lg.mt-3(href="/equipments") Start Rating

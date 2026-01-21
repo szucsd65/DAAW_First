@@ -1,0 +1,46 @@
+extends layout
+
+block content
+  .container.mt-4
+    h1 Edit Equipment
+    if equipment
+      form(method='POST' action=`/equipments/${equipment._id}/edit`)
+        .row.g-4
+          .col-md-6
+            .form-floating.mb-3
+              input#nomInput.form-control(type='text', name='nom', value=equipment.nom || '', required)
+              label(for='nomInput') Name
+          .col-md-6
+            .form-floating.mb-3
+              select#tipusSelect.form-control(name='tipus', required)
+                option(value="") Select type...
+                option(value="agricultura" selected=(equipment.tipus === 'agricultura')) Agricultura
+                option(value="comer" selected=(equipment.tipus === 'comer')) Comer
+                option(value="cultura" selected=(equipment.tipus === 'cultura')) Cultura
+                option(value="ensenyamantieducaci" selected=(equipment.tipus === 'ensenyamantieducaci')) Ensenyament i educaci
+                option(value="esports" selected=(equipment.tipus === 'esports')) Esports
+                option(value="habitatge" selected=(equipment.tipus === 'habitatge')) Habitatge
+                option(value="justicia" selected=(equipment.tipus === 'justicia')) Justícia
+                option(value="mediamibent" selected=(equipment.tipus === 'mediamibent')) Medi Ambient
+                option(value="mobilitat" selected=(equipment.tipus === 'mobilitat')) Mobilitat
+                option(value="organismesoficialsiocinesadministratives" selected=(equipment.tipus === 'organismesoficialsiocinesadministratives')) Organismes oficials i oficines administratives
+                option(value="recera" selected=(equipment.tipus === 'recera')) Recerca
+                option(value="sanitari" selected=(equipment.tipus === 'sanitari')) Sanitari
+                option(value="seguretat" selected=(equipment.tipus === 'seguretat')) Seguretat
+                option(value="social" selected=(equipment.tipus === 'social')) Social
+                option(value="tecnologia" selected=(equipment.tipus === 'tecnologia')) Tecnologia
+                option(value="treball" selected=(equipment.tipus === 'treball')) Treball
+                option(value="turismeioci" selected=(equipment.tipus === 'turismeioci')) Turisme i Oci
+              label(for='tipusSelect') Type
+          .col-md-12
+            .form-floating
+              textarea#descripcioTextarea.form-control(name='descripcio', style='height: 120px')= equipment.descripcio || ''
+              label(for='descripcioTextarea') Description
+
+        .row.mt-4
+          .col-12
+            button.btn.btn-primary.btn-lg(type='submit') Update Equipment
+            a.btn.btn-secondary.ms-2(href='/equipments') Cancel
+
+    else
+      .alert.alert-warning.text-center Equipment not found

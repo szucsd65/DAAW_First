@@ -1,0 +1,142 @@
+extends layout
+
+block content
+  .container-fluid.py-4
+    .row.mb-5
+      .col-md-8
+        h1.fw-bold.text-primary City Facilities
+        small.text-muted #{equipments ? equipments.length : 0} total facilities
+      .col-md-4.text-end
+        if user && user.role === 'admin'
+          a.btn.btn-success.btn-lg(href='/equipments/add') Add Facility
+
+    .row.mb-4
+      .col-md-5
+        input#searchInput.form-control.form-control-lg(
+          placeholder='Search by name, location, district...'
+          type='text'
+        )
+      .col-md-3
+        select#filterType.form-select.form-select-lg
+          option(value='') All Types
+          if types && types.length
+            each type in types
+              option(value=type)= type.charAt(0).toUpperCase() + type.slice(1)
+      .col-md-4.text-end
+        button#clearFilters.btn.btn-outline-secondary.me-2 Clear Filters
+        button#mapToggle.btn-outline-primary
+          i.fas.fa-map.me-1 Toggle Map
+
+    #facilitiesGrid.row.g-4.mb-5
+      if equipments && equipments.length
+        each equipment in equipments
+          .col-xl-3.col-lg-4.col-md-6.col-sm-12
+            .card.h-100.shadow-sm.border-0.rounded-3.hover-lift.overflow-hidden
+              .card-img-top.d-flex.align-items-center.justify-content-center.text-white.bg-gradient-primary.fs-1.fw-bold.text-uppercase(style='height:180px')
+                | #{equipment.tipus || 'Facility'}
+              .card-body.p-4.d-flex.flex-column
+                h5.card-title.fw-bold.mb-3.line-clamp-2= equipment.nom
+                .mb-3
+                  span.badge.bg-primary.me-2.text-uppercase= equipment.tipus
+                  if equipment.averageRating
+                    span.badge.bg-warning.text-dark #{equipment.averageRating.toFixed(1)} stars
+                ul.list-unstyled.small.text-muted.mb-auto
+                  li.mb-2 Location: #{equipment.localitzacio}
+                  li.mb-2 District: #{equipment.districte}
+                  if equipment.address
+                    li Address: #{equipment.address}
+                .mt-auto
+                  .btn-group.w-100
+                    a.btn.btn-primary(href=`/equipment/${equipment._id}`)
+                      i.fas.fa-eye.me-1 Rate & Review
+                    a.btn.btn-outline-info.btn-sm(
+                      href=`https://maps.google.com/maps?q=${equipment.latitud},${equipment.longitud}`
+                      target='_blank'
+                      title='Open in Google Maps'
+                    )
+                      i.fas.fa-map Maps
+
+      else
+        .col-12
+          .alert.alert-info.text-center.shadow-lg.p-5.rounded-4
+            h3 No facilities found
+            p.lead Try adjusting your search or type filters
+            button#clearFilters.btn.btn-outline-info.btn-lg Clear All Filters
+
+    #mapSection.d-none.mb-5
+      .card.shadow-lg.border-0.rounded-3.overflow-hidden
+        #facilitiesMap(style='height: 500px; min-height: 400px')
+
+  script.
+    function filterFacilities() {
+      var search = document.getElementById('searchInput').value.toLowerCase()
+      var typeFilter = document.getElementById('filterType').value
+      var cols = document.querySelectorAll('#facilitiesGrid .col-xl-3, #facilitiesGrid .col-lg-4, #facilitiesGrid .col-md-6')
+      for (var i = 0; i < cols.length; i++) {
+        var col = cols[i]
+        var text = col.textContent.toLowerCase()
+        var typeEl = col.querySelector('.badge')
+        var matchSearch = !search || text.indexOf(search) !== -1
+        var matchType = !typeFilter || (typeEl && typeEl.textContent === typeFilter)
+        col.style.display = (matchSearch && matchType) ? '' : 'none'
+      }
+      updateNoResults()
+    }
+
+    function updateNoResults() {
+      var visibleCards = document.querySelectorAll('#facilitiesGrid [class*="col-"]:not([style*="display: none"])').length
+      var noResults = document.querySelector('.alert.alert-info')
+      if (noResults) noResults.style.display = visibleCards === 0 ? 'block' : 'none'
+    }
+
+    function clearFilters() {
+      document.getElementById('searchInput').value = ''
+      document.getElementById('filterType').value = ''
+      filterFacilities()
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('searchInput').addEventListener('input', filterFacilities)
+      document.getElementById('filterType').addEventListener('change', filterFacilities)
+      document.querySelectorAll('#clearFilters').forEach(function(btn) {
+        btn.addEventListener('click', clearFilters)
+      })
+    })
+
+    var mapToggle = document.getElementById('mapToggle')
+    var facilitiesMap
+    function initMap() {
+      facilitiesMap = L.map('facilitiesMap').setView([41.11879, 1.24593], 13)
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(facilitiesMap)
+      
+      if (typeof equipments !== 'undefined' && equipments) {
+        equipments.forEach(function(eq) {
+          if (eq.latitud && eq.longitud) {
+            var popupContent = '<div class="p-2"><strong>' + eq.nom + '</strong><br>' +
+                               '<span class="badge bg-primary">' + eq.tipus + '</span><br>' +
+                               eq.localitzacio + '<br>' +
+                               '<a href="/equipment/' + eq._id + '" class="btn btn-sm btn-primary mt-2 w-100">View Details</a></div>'
+            L.marker([eq.latitud, eq.longitud])
+              .addTo(facilitiesMap)
+              .bindPopup(popupContent)
+          }
+        })
+      }
+    }
+
+    if (mapToggle) {
+      mapToggle.addEventListener('click', function() {
+        var grid = document.getElementById('facilitiesGrid')
+        var mapSec = document.getElementById('mapSection')
+        if (mapSec.classList.contains('d-none')) {
+          mapSec.classList.remove('d-none')
+          grid.classList.add('d-none')
+          if (!facilitiesMap) initMap()
+        } else {
+          mapSec.classList.add('d-none')
+          grid.classList.remove('d-none')
+        }
+      })
+    }

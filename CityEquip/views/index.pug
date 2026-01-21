@@ -1,0 +1,34 @@
+extends layout
+
+block content
+  .row.justify-content-center.text-center.py-5
+    .col-lg-8
+      if user
+        .row.g-4
+          .col-md-4
+            .card.h-100.shadow-lg.border-0.rounded-4.hover-lift
+              .card-body.text-center
+                h5 All Facilities
+                p.text-muted.mb-3 Browse complete list
+                a.btn.btn-primary.w-100(href="/equipments") View List
+          .col-md-4
+            .card.h-100.shadow-lg.border-0.rounded-4.hover-lift
+              .card-body.text-center
+                h5 Rankings
+                p.text-muted.mb-3 Global & personal tops
+                a.btn.btn-warning.w-100(href="/topEquipment") See Rankings
+          .col-md-4
+            .card.h-100.shadow-lg.border-0.rounded-4.hover-lift
+              .card-body.text-center
+                h5 My Reviews
+                p.text-muted.mb-3 Manage ratings
+                a.btn.btn-info.text-white.w-100(href="/myRatings") My Ratings
+      else
+        .alert.alert-info.shadow-lg.rounded-4
+          h4.mb-3 Please log in to rate facilities
+          .row.g-3
+            .col-md-6
+              a.btn.btn-primary.btn-lg.w-100(href="/login") Login
+            .col-md-6
+              a.btn.btn-outline-primary.btn-lg.w-100(href="/register") Register
+        a.btn.btn-primary.btn-lg.w-100.mt-4(href="/equipments") Browse as Guest

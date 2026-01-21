@@ -1,0 +1,30 @@
+extends layout
+
+block content
+  .container.mt-4
+    h1 Global Top Equipment
+    if topEquipments && topEquipments.length > 0
+      .row.g-4
+        each equipment in topEquipments
+          .col-lg-4.col-md-6
+            .card.h-100.shadow-sm.border-0.rounded-3.hover-lift
+              .card-header.bg-primary.text-white
+                h5.mb-1 #{equipment.nom}
+                span.badge.bg-light.text-dark #{equipment.tipus}
+              .card-body.d-flex.flex-column
+                .flex-grow-1
+                  p.small.mb-2 Total ratings: #{equipment.ratings ? equipment.ratings.length : 0}
+                  p.mb-0
+                    strong Avg Rating: 
+                    span.text-warning #{equipment.averageRating ? equipment.averageRating.toFixed(1) : 'No rating'}
+                .mt-auto
+                  a.btn.btn-primary.w-100(href=`/equipment/${equipment._id}`) View Details
+    else
+      .alert.alert-info.text-center.shadow-sm.py-5
+        h3 No ratings yet!
+        p.lead Start rating facilities to see rankings.
+        a.btn.btn-primary.btn-lg.mt-3(href="/equipments") Browse Facilities
+
+    hr.mt-5
+    .text-center
+      a.btn.btn-outline-secondary.btn-lg(href='/equipments') All Equipment

@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  .container.mt-5.text-center
+    .row.justify-content-center
+      .col-lg-6
+        .display-4.text-danger.mb-4 404
+        h2 Page Not Found
+        p.lead.mb-4 The requested page could not be found.
+        hr.mx-auto(style="width: 200px; height: 3px;")
+        .mt-5
+          a.btn.btn-primary.btn-lg.me-3(href="/") Home
+          a.btn.btn-outline-secondary.btn-lg(href="/equipments") Facilities
